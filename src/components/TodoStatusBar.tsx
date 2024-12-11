@@ -9,13 +9,18 @@ const InfoBar = styled.div`
 export interface TodoStatusBarProps {
   className?: string;
   total: number;
+  totalDone: number;
 }
 
-const _TodoStatusBar: React.FC<TodoStatusBarProps> = ({className, total}) => (
+const _TodoStatusBar: React.FC<TodoStatusBarProps> = ({
+  className,
+  total,
+  totalDone,
+}) => (
   <div data-cy='TodoStatusBar' className={className}>
     <InfoBar>
       <span>Total: {total}</span>
-      <span>Done: 0</span>
+      <span>Done: {totalDone}</span>
     </InfoBar>
   </div>
 );

@@ -10,32 +10,21 @@ const TodoCheckbox = styled.input`
   margin-right: 8px;
 `;
 
-const updateTodo = async (todo: Todo) => {
-  const response = await fetch(`http://localhost:3001/todos/${todo.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(todo),
-  });
-  if (!response.ok) {
-    window.alert(`Unexpected error ${response.status}: ${response.statusText}`);
-    return todo;
-  }
-};
+export type OnTodoChange = (todo: Todo) => Promise<Todo>;
 
 export interface TodoItemProps {
   todo: Todo;
+  todoChange: OnTodoChange;
   className?: string;
 }
 
-const _TodoItem: React.FC<TodoItemProps> = ({todo, className}) => {
+const _TodoItem: React.FC<TodoItemProps> = ({todo, className, todoChange}) => {
   const [checked, setChecked] = useState(todo.done);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     todo.done = event.target.checked.valueOf();
     setChecked(todo.done);
-    updateTodo(todo);
+    todoChange(todo);
   };
 
   return (

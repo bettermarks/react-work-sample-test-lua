@@ -11,7 +11,10 @@ test('populates TodoList and assert they are listed by most recent', async () =>
     { id: '1', text: 'First todo', done: false, createdTimestamp: 1000 },
     { id: '2', text: 'Second todo', done: false, createdTimestamp: 2000 }
   ];
-  const {getByText} = render(<TodoList todos={todos} />);
+
+  const onChange = jest.fn(async () => todos[0]);
+
+  const {getByText} = render(<TodoList todos={todos} todoChange={onChange} />);
   const items = screen.getAllByRole('listitem');
 
   expect(items[0]).toHaveTextContent("Second todo");
