@@ -11,9 +11,11 @@ export interface TodoListProps {
 const _TodoList: React.FC<TodoListProps> = ({todos, className}) => {
   return (
     <ul data-cy='TodoList' className={className}>
-      {todos.map((todo, index) => (
-        <TodoItem key={index} todo={todo} />
-      ))}
+      {todos
+        .sort((t1, t2) => t2.createdTimestamp - t1.createdTimestamp)
+        .map((todo, index) => (
+          <TodoItem key={index} todo={todo} />
+        ))}
     </ul>
   );
 };
