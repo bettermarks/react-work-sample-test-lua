@@ -72,6 +72,11 @@ export const App: React.FC = () => {
       );
       return todo;
     }
+    if (todo.done && totalDone + 1 === todos.length) {
+      window.alert(
+        `"Congratulations, you're all set! You've done everything on your list."`
+      );
+    }
     setTotalDone(updateTotalDone);
     return todo;
   };
