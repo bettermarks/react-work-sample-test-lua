@@ -45,7 +45,6 @@ export const App: React.FC = () => {
     (async () => {
       const response = await fetch('http://localhost:3001/todos');
       setTodos(await response.json());
-      // setTotalDone(todos.filter(todo => todo.done).length);
       dispatchDoneCounter({type: 'INITIAL'});
     })();
   }, []);
