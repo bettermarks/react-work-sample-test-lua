@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useReducer} from 'react';
 import styled from 'styled-components';
 import {TodosFooter} from './components/TodosFooter';
 import {TodosHeader} from './components/TodosHeader';
@@ -23,16 +23,32 @@ export interface AppState {
 
 export const App: React.FC = () => {
   const [todos, setTodos] = React.useState<Todo[]>([]);
-  const updateTotalDone = () => todos.filter(todo => todo.done).length;
-  const [totalDone, setTotalDone] = React.useState(updateTotalDone);
+  const [congratsVisibility, setCongratsVisibility] = React.useState('none');
+  type CounterAction = {type: 'ADD'} | {type: 'REMOVE'} | {type: 'INITIAL'};
+  const [totalDone, dispatchDoneCounter] = useReducer(
+    (state: number, action: CounterAction): number => {
+      switch (action.type) {
+        case 'ADD':
+          return state + 1;
+        case 'REMOVE':
+          return state - 1;
+        case 'INITIAL':
+          return todos.filter(todo => todo.done).length;
+        default:
+          return 0;
+      }
+    },
+    0
+  );
 
   React.useEffect(() => {
     (async () => {
       const response = await fetch('http://localhost:3001/todos');
       setTodos(await response.json());
-      setTotalDone(updateTotalDone);
+      // setTotalDone(todos.filter(todo => todo.done).length);
+      dispatchDoneCounter({type: 'INITIAL'});
     })();
-  }, [updateTotalDone]);
+  }, []);
 
   const createTodo: OnSubmit = async text => {
     const newTodo = {
@@ -72,24 +88,32 @@ export const App: React.FC = () => {
       );
       return todo;
     }
-    if (todo.done && totalDone + 1 === todos.length) {
-      window.alert(
-        `"Congratulations, you're all set! You've done everything on your list."`
-      );
+    let totalDoneCount = todos.filter(todo => todo.done).length;
+    if (todo.done && totalDoneCount === todos.length) {
+      setCongratsVisibility('flex');
     }
-    setTotalDone(updateTotalDone);
+    dispatchDoneCounter(todo.done ? {type: 'ADD'} : {type: 'REMOVE'});
     return todo;
   };
 
   return (
     <AppContainer className='App'>
       <TodosHeader>
-        <TodoStatusBar total={todos.length} totalDone={totalDone} />
+        <TodoStatusBar
+          total={todos.length}
+          totalDone={totalDone}
+          // TODO: create a new component for the banner instead of adding in both header and footer
+          congratsBannerVisibility={congratsVisibility}
+        />
       </TodosHeader>
       <TodoInput onSubmit={createTodo} />
       <TodoList todos={todos} todoChange={updateTodo} />
       <TodosFooter>
-        <TodoStatusBar total={todos.length} totalDone={totalDone} />
+        <TodoStatusBar
+          total={todos.length}
+          totalDone={totalDone}
+          congratsBannerVisibility={'none'}
+        />
       </TodosFooter>
     </AppContainer>
   );

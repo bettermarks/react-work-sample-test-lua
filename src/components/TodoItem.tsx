@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {Todo} from '../types';
 
@@ -19,17 +19,18 @@ export interface TodoItemProps {
 }
 
 const _TodoItem: React.FC<TodoItemProps> = ({todo, className, todoChange}) => {
-  const [checked, setChecked] = useState(todo.done);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     todo.done = event.target.checked.valueOf();
-    setChecked(todo.done);
     todoChange(todo);
   };
 
   return (
     <li data-cy='TodoItem' className={className}>
-      <TodoCheckbox type='checkbox' checked={checked} onChange={handleChange} />
+      <TodoCheckbox
+        type='checkbox'
+        checked={todo.done}
+        onChange={handleChange}
+      />
       <TodoText done={todo.done}>{todo.text}</TodoText>
     </li>
   );
